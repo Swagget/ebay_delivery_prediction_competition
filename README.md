@@ -5,6 +5,8 @@
 I didn't implement an automated tool for downloading data since only us 3 will be using this codebase.
 For data to be properly downloaded the 2 given files 'train.tsv' and 'quiz.tsv' should be in "./data/supplied_data".
 
+Link to the dataset : https://drive.google.com/file/d/1ex7TlDCuna5YH2A06GPcSjTVzbk51--k/view?usp=sharing
+
 # Other Data
 If we ever get additional data then I'll put it in a google drive link which will be using the exact samem file structure.
 For example, the contents of the "data" folder in the drive should be inserted into the "/data" folder in your local repo clone.
