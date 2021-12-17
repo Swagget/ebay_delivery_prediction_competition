@@ -47,7 +47,7 @@ class Preprocessing:
     #     return dict(cols_to_return)
 
     @classmethod
-    def read_data(Preprocessing, path="../data/supplied_data/", rows_to_read=100): # This needs to be improved.
+    def read_data(Preprocessing, path="../data/supplied_data/", rows_to_read=100, columns = []):
         """Reads all csvs from path, names them, and returns a dict with all dataframe objects.
         If rows_to_read is set to None then it will attempt to read all the rows.
         """
@@ -55,18 +55,27 @@ class Preprocessing:
             print("Reading full data.")
         else:
             print(f"Reading {rows_to_read} rows.")
+        if columns == []:
+            print("Reading all columns.")
+        else:
+            print(f"Reading {columns} columns.")
         csv_re = re.compile(".tsv$")
         dataset_object = {}
         for file in os.listdir(path):
             if csv_re.search(file) is not None:
                 file_path = os.path.join(path, file)
                 file_name = file[:csv_re.search(file).start()]
-                #             print("file_name : ", file_name)
-                #             print("file_path : ", file_path)
-                dataset_object[file_name] = pd.read_csv(file_path, sep='\t', nrows=rows_to_read)
-                #             dataset_object[file_name] = Preprocessing.clean_df_sort_with_date(dataset_object[file_name],
-                #                                                                                 date_column = date_column,
-                #                                                                                 datetime_format = datetime_format)
+                if rows_to_read != None:
+                    if columns == []:
+                        dataset_object[file_name] = pd.read_csv(file_path, sep='\t', nrows=rows_to_read)
+                    else:
+                        dataset_object[file_name] = pd.read_csv(file_path, sep='\t', nrows=rows_to_read, usecols=columns)
+                else:
+                    if columns == []:
+                        dataset_object[file_name] = pd.read_csv(file_path, sep='\t')
+                    else:
+                        dataset_object[file_name] = pd.read_csv(file_path, sep='\t', usecols=columns)
+
                 dataset_object[file_name].name = file_name
         return dataset_object
 
