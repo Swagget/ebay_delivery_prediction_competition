@@ -25,7 +25,7 @@ When updating the source code ensure that all functions are backwards compatible
 When adding any classes/modules/python files to the source code, add them to "./ebay_delivery_prediction_project/\_\_init__.py" to ensure that they are importable in the module.
 
 # Pushing Code
-When pushing any update, push them in a separate branch and issue a merge request so I can review it before we add the changes to the main branch. (I also need to figure out how to do this)-Swagget
+When pushing any update, push them in a separate branch and issue a merge request so I can review it before we add the changes to the main branch. (I figured out how to do this!)-Swagget
 
 # Testing Installation
 To see if the module is correctly installed please run "python testing_module.py" from the root. The output should be "Test Successful."
