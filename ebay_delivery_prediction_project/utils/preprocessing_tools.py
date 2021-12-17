@@ -3,7 +3,7 @@ import re
 import os
 from collections import defaultdict
 import numpy as np
-import datetime
+from datetime import datetime
 
 class Preprocessing:
     @staticmethod
@@ -47,7 +47,7 @@ class Preprocessing:
     #     return dict(cols_to_return)
 
     @classmethod
-    def read_data(Preprocessing, path="../data/supplied_data/", rows_to_read=100, columns = []):
+    def read_data(Preprocessing, path="../data/supplied_data/", rows_to_read=100, columns = []): # This could use a random parameter that shuffles which rows are picked.
         """Reads all csvs from path, names them, and returns a dict with all dataframe objects.
         If rows_to_read is set to None then it will attempt to read all the rows.
         """
@@ -79,13 +79,17 @@ class Preprocessing:
                 dataset_object[file_name].name = file_name
         return dataset_object
 
-    # @staticmethod
-    # def clean_df_sort_with_date(df, date_column, datetime_format):
-    #     """Takes a df, a date_column and the datetime_format. Outputs the df with the datetime column replaced with the correct datatype."""
-    #     df[date_column] = pd.to_datetime(df[date_column], format=datetime_format)
-    #     df = df.sort_values(by=date_column).reset_index(drop=True)
-    #     return df
-    #
+    @classmethod
+    def parse_datetime_columns(Preprocessing, df):
+        def preprocess_payment_datetime(string):
+            return datetime.strptime(string[:-3] + string[-2:], '%Y-%m-%d %H:%M:%S.000%z')
+        def preprocess_delivery_date(string):
+            return datetime.strptime(string, '%Y-%m-%d')
+        df["acceptance_scan_timestamp"] = df["acceptance_scan_timestamp"].apply(preprocess_payment_datetime)
+        df["payment_datetime"] = df["payment_datetime"].apply(preprocess_payment_datetime)
+        df["delivery_date"] = df["delivery_date"].apply(preprocess_delivery_date)
+        return df
+
     # @staticmethod
     # def expand_datetime(df, date_column):
     #     """Takes a df and a datetime column. Outputs the df with the datetime column expanded into year, month, week, day of year."""
