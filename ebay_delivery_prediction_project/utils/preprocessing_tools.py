@@ -47,7 +47,7 @@ class Preprocessing:
     #     return dict(cols_to_return)
 
     @classmethod
-    def read_data(Preprocessing, path="../data/supplied_data/", rows_to_read=100):
+    def read_data(Preprocessing, path="../data/supplied_data/", rows_to_read=100): # This needs to be improved.
         """Reads all csvs from path, names them, and returns a dict with all dataframe objects.
         If rows_to_read is set to None then it will attempt to read all the rows.
         """
