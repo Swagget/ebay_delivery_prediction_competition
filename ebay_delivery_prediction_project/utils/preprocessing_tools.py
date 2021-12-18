@@ -90,6 +90,14 @@ class Preprocessing:
         df["delivery_date"] = df["delivery_date"].apply(preprocess_delivery_date)
         return df
 
+    @classmethod
+    def create_delivery_calendar_days(Preprocessing, df):
+        # This definetely could be improved. Need to look into time zones, working days, weekends, etc.
+        def create_target_col(row):
+            return (row["delivery_date"].date() - row["payment_datetime"].date()).days
+        df["delivery_calendar_days"] = df.apply(create_target_col, axis=1)
+        return df
+
     # @staticmethod
     # def expand_datetime(df, date_column):
     #     """Takes a df and a datetime column. Outputs the df with the datetime column expanded into year, month, week, day of year."""
