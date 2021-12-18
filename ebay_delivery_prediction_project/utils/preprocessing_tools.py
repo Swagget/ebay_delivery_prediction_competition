@@ -98,6 +98,15 @@ class Preprocessing:
         df["delivery_calendar_days"] = df.apply(create_target_col, axis=1)
         return df
 
+    @classmethod
+    def one_hot_encode_columns(Preprocessing, df, columns):
+        generated_columns = []
+        for col in columns:
+            for val in df[col].unique():
+                generated_columns.append(col + "_" + str(val))
+        to_return_1 =  pd.get_dummies(df, columns=columns, prefix=columns)
+        return to_return_1, generated_columns
+
     # @staticmethod
     # def expand_datetime(df, date_column):
     #     """Takes a df and a datetime column. Outputs the df with the datetime column expanded into year, month, week, day of year."""
