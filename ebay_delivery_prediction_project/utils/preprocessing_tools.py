@@ -5,7 +5,7 @@ from collections import defaultdict
 import numpy as np
 from datetime import datetime
 
-class Preprocessing:
+class preprocessing:
     @staticmethod
     def import_test():
         """Testing import. It should print\"Preprocessing successfully imported.\""""
