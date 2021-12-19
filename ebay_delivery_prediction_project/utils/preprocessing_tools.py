@@ -70,3 +70,20 @@ class preprocessing:
                 generated_columns.append(col + "_" + str(val))
         to_return_1 =  pd.get_dummies(df, columns=columns, prefix=columns)
         return to_return_1, generated_columns
+
+    @classmethod
+    def basic_preprocessing(Preprocessing, df):
+        df = preprocessing.parse_datetime_columns(df)
+        df = preprocessing.create_delivery_calendar_days(df)
+        return df
+
+    @staticmethod
+    def expand_datetime(df, date_column): # Perhaps add  functionality to add more flags and different variables that could be used.
+        """Takes a df and a datetime column.
+        Outputs the df with the datetime column expanded into year, month, week, day of the week, day of year."""
+        df[date_column+"_year"] = df[date_column].apply(lambda x : x.isocalendar()[0])
+        df[date_column+"_month"] = df[date_column].apply(lambda x : x.month)
+        df[date_column+"_week"] = df[date_column].apply(lambda x : x.isocalendar()[1])
+        df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.isocalendar()[2])
+        df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : x.isocalendar()[2] + (7 * x.isocalendar()[1]))
+        return df
