@@ -81,9 +81,9 @@ class preprocessing:
     def expand_datetime(df, date_column): # Perhaps add  functionality to add more flags and different variables that could be used.
         """Takes a df and a datetime column.
         Outputs the df with the datetime column expanded into year, month, week, day of the week, day of year."""
-        df[date_column+"_year"] = df[date_column].apply(lambda x : x.isocalendar()[0])
+        df[date_column+"_year"] = df[date_column].apply(lambda x : int(x.strftime('%Y')))
         df[date_column+"_month"] = df[date_column].apply(lambda x : x.month)
         df[date_column+"_week"] = df[date_column].apply(lambda x : x.isocalendar()[1])
-        df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.isocalendar()[2])
-        df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : x.isocalendar()[2] + (7 * x.isocalendar()[1]))
+        df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.strftime('%A'))
+        df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : int(x.strftime('%j')))
         return df
