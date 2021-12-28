@@ -2,6 +2,8 @@ import pandas as pd
 import re
 import os
 from datetime import datetime
+import pgeocode
+
 
 class preprocessing:
     @staticmethod
@@ -71,19 +73,46 @@ class preprocessing:
         to_return_1 =  pd.get_dummies(df, columns=columns, prefix=columns)
         return to_return_1, generated_columns
 
+    @staticmethod
+    def zip_clean(zipp):
+        try:
+            return str(int(str(zipp)[:5])).zfill(5)
+        except:
+            return None
+
+    @classmethod
+    def clean_zip_codes(cls, df):
+        df["cleaned_item_zip"] = df["item_zip"].apply(lambda zipp: cls.zip_clean(zipp))
+        df["cleaned_buyer_zip"] = df["buyer_zip"].apply(lambda zipp: cls.zip_clean(zipp))
+        return df
+
+    @classmethod
+    def pin_codes_dist(cls, pin_1, pin_2):
+        return cls.dist.query_postal_code(pin_1, pin_2)
+
+    @classmethod
+    def add_distance_euclidean(cls, df):
+        cls.dist = pgeocode.GeoDistance('us')
+        df["distance_between_pincodes"] = df.apply(lambda row: cls.pin_codes_dist(row["cleaned_buyer_zip"],
+                                                                                  row["cleaned_item_zip"]),
+                                                    axis=1)
+        return df
+
     @classmethod
     def basic_preprocessing(Preprocessing, df):
         df = preprocessing.parse_datetime_columns(df)
         df = preprocessing.create_delivery_calendar_days(df)
+        df = preprocessing.clean_zip_codes(df)
+        df = preprocessing.add_distance_euclidean(df)
         return df
 
     @staticmethod
     def expand_datetime(df, date_column): # Perhaps add  functionality to add more flags and different variables that could be used.
         """Takes a df and a datetime column.
         Outputs the df with the datetime column expanded into year, month, week, day of the week, day of year."""
-        df[date_column+"_year"] = df[date_column].apply(lambda x : x.isocalendar()[0])
+        df[date_column+"_year"] = df[date_column].apply(lambda x : int(x.strftime('%Y')))
         df[date_column+"_month"] = df[date_column].apply(lambda x : x.month)
         df[date_column+"_week"] = df[date_column].apply(lambda x : x.isocalendar()[1])
-        df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.isocalendar()[2])
-        df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : x.isocalendar()[2] + (7 * x.isocalendar()[1]))
+        df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.strftime('%A'))
+        df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : int(x.strftime('%j')))
         return df
