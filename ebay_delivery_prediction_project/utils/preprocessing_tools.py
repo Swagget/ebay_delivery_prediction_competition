@@ -93,16 +93,21 @@ class preprocessing:
     @classmethod
     def add_distance_euclidean(cls, df):
         cls.dist = pgeocode.GeoDistance('us')
-        df["distance_between_pincodes"] = df.apply(lambda row: cls.pin_codes_dist(row["cleaned_buyer_zip"],
-                                                                                  row["cleaned_item_zip"]),
-                                                    axis=1)
+        # df["distance_between_pincodes"] = df.apply(lambda row: cls.pin_codes_dist(row["cleaned_buyer_zip"],
+        #                                                                           row["cleaned_item_zip"]),
+        #                                             axis=1)
+        df["distance_between_pincodes"] = cls.dist.query_postal_code(
+            df["cleaned_item_zip"].values, df["cleaned_buyer_zip"].values)
         return df
 
     @classmethod
     def basic_preprocessing(Preprocessing, df):
         df = preprocessing.parse_datetime_columns(df)
+        print("Finished parse_datetime_columns")
         df = preprocessing.create_delivery_calendar_days(df)
+        print("Finished create_delivery_calendar_days")
         df = preprocessing.clean_zip_codes(df)
+        print("Finished clean_zip_codes")
         df = preprocessing.add_distance_euclidean(df)
         return df
 
