@@ -3,6 +3,8 @@ import re
 import os
 from datetime import datetime
 import pgeocode
+from sklearn.preprocessing import LabelEncoder
+
 
 
 class preprocessing:
@@ -93,16 +95,44 @@ class preprocessing:
     @classmethod
     def add_distance_euclidean(cls, df):
         cls.dist = pgeocode.GeoDistance('us')
-        df["distance_between_pincodes"] = df.apply(lambda row: cls.pin_codes_dist(row["cleaned_buyer_zip"],
-                                                                                  row["cleaned_item_zip"]),
-                                                    axis=1)
+        # df["distance_between_pincodes"] = df.apply(lambda row: cls.pin_codes_dist(row["cleaned_buyer_zip"],
+        #                                                                           row["cleaned_item_zip"]),
+        #                                             axis=1)
+        df["distance_between_pincodes"] = cls.dist.query_postal_code(
+            df["cleaned_item_zip"].values, df["cleaned_buyer_zip"].values)
+        return df
+
+    @classmethod
+    def removeMissingValues(cls, data, column, missing_val):
+        row_names = data[data[column] == missing_val].index
+        data.drop(row_names, inplace=True)
+        print("Number of Rows dropped: ", len(row_names))
+        return data
+
+    @classmethod
+    def other_preprocessing(cls, df): # TODO : @monisha could you redefine this and split it up if necessary. I pulled this from your EDA notebook
+        df['declared_handling_days'].fillna(df['declared_handling_days'].mean(), inplace=True)
+        df = cls.removeMissingValues(df, 'carrier_min_estimate', -1)
+        df = cls.removeMissingValues(df, 'carrier_max_estimate', -1)
+        columns_to_remove = ['record_number']
+        df = df.drop(columns=list(columns_to_remove))
+        unique = df.nunique()
+        unique = unique[unique.values == 1]
+        # print(list(unique.index))
+        df = df.drop(columns=list(unique.index))
+        categorical_values = ['b2c_c2c', 'package_size']
+        le = LabelEncoder()
+        df[categorical_values] = df[categorical_values].apply(lambda col: le.fit_transform(col))
         return df
 
     @classmethod
     def basic_preprocessing(Preprocessing, df):
         df = preprocessing.parse_datetime_columns(df)
+        print("Finished parse_datetime_columns")
         df = preprocessing.create_delivery_calendar_days(df)
+        print("Finished create_delivery_calendar_days")
         df = preprocessing.clean_zip_codes(df)
+        print("Finished clean_zip_codes")
         df = preprocessing.add_distance_euclidean(df)
         return df
 
