@@ -1,3 +1,13 @@
 # Created by .ignore support plugin (hsz.mobi)
 data/*
 results/
+notebooks/.ipynb_checkpoints/Swagget's basic pipeline cropping outliers-checkpoint.ipynb
+ebay_delivery_prediction_project/utils/__pycache__/visualisation_tools.cpython-39.pyc
+ebay_delivery_prediction_project/utils/__pycache__/preprocessing_tools.cpython-39.pyc
+ebay_delivery_prediction_project/utils/__pycache__/postprocessing_tools.cpython-39.pyc
+ebay_delivery_prediction_project/__pycache__/models.cpython-39.pyc
+ebay_delivery_prediction_project/__pycache__/__init__.cpython-39.pyc
+ebay_delivery_prediction_project.egg-info/top_level.txt
+ebay_delivery_prediction_project.egg-info/SOURCES.txt
+ebay_delivery_prediction_project.egg-info/PKG-INFO
+ebay_delivery_prediction_project.egg-info/dependency_links.txt
