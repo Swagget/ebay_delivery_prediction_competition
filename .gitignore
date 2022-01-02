@@ -1,23 +1,13 @@
 # Created by .ignore support plugin (hsz.mobi)
 data/*
 results/
-ebay_delivery_prediction_project/__pycache__/__init__.cpython-38.pyc
-*.pyc
-notebooks/.ipynb_checkpoints/custom_loss_lightgbm-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Example-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/learning_about_the_tools-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Swagget's basic pipeline-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Monisha_notebook-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Testbed-checkpoint.ipynb
-notebooks/custom_loss_lightgbm.ipynb
-.ipynb_checkpoints/learning_about_the_tools-checkpoint.ipynb
-ebay_delivery_prediction_project.egg-info/dependency_links.txt
-ebay_delivery_prediction_project.egg-info/PKG-INFO
-ebay_delivery_prediction_project.egg-info/SOURCES.txt
+notebooks/.ipynb_checkpoints/Swagget's basic pipeline cropping outliers-checkpoint.ipynb
+ebay_delivery_prediction_project/utils/__pycache__/visualisation_tools.cpython-39.pyc
+ebay_delivery_prediction_project/utils/__pycache__/preprocessing_tools.cpython-39.pyc
+ebay_delivery_prediction_project/utils/__pycache__/postprocessing_tools.cpython-39.pyc
+ebay_delivery_prediction_project/__pycache__/models.cpython-39.pyc
+ebay_delivery_prediction_project/__pycache__/__init__.cpython-39.pyc
 ebay_delivery_prediction_project.egg-info/top_level.txt
-notebooks/.ipynb_checkpoints/Monisha's EDA-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Swagget's EDA-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Monisha's EDA-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Swagget's EDA-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Loss function creation 2-checkpoint.ipynb
-notebooks/.ipynb_checkpoints/Monisha's EDA-checkpoint.ipynb
+ebay_delivery_prediction_project.egg-info/SOURCES.txt
+ebay_delivery_prediction_project.egg-info/PKG-INFO
+ebay_delivery_prediction_project.egg-info/dependency_links.txt
