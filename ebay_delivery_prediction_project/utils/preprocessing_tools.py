@@ -64,6 +64,7 @@ class preprocessing:
         def create_target_col(row):
             return (row["delivery_date"].date() - row["payment_datetime"].date()).days
         df["delivery_calendar_days"] = df.apply(create_target_col, axis=1)
+        df = df[df["delivery_calendar_days"] >= 0]
         return df
 
     @classmethod
@@ -145,4 +146,59 @@ class preprocessing:
         df[date_column+"_week"] = df[date_column].apply(lambda x : x.isocalendar()[1])
         df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.strftime('%A'))
         df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : int(x.strftime('%j')))
+<<<<<<< Updated upstream
         return df
+=======
+        return df
+
+    @classmethod
+    def drop_bad_values(cls, df):
+        df = preprocessing.replace_neg_with_nan(df)
+        df = preprocessing.drop_nan(df)
+        return df
+
+    @classmethod
+    def replace_neg_with_nan(cls, df):
+        for col in cls.numerical_column:
+            col_data = df[col]
+            negative_mask = col_data < 0
+            col_data[negative_mask] = np.nan
+            df[col] = col_data
+        return df
+
+    @classmethod
+    def drop_nan(cls, df):
+        na_columns = []
+        sum_na = df.isnull().sum()
+        columns = df.columns
+        for i in range(len(sum_na)):
+            if sum_na[i] != 0:
+                if int((sum_na[i] / len(df)) * 100) == 0:
+                    na_columns.append(columns[i])
+        df = df.dropna(subset = na_columns)
+        return df
+
+    @classmethod
+    def squeeze_outlier_with_interquantile_range(cls, data):
+        for col in cls.numerical_column:
+            sorted(data[col])
+            Q1, Q3 = data[col].quantile([0.25, 0.75])
+            IQR = Q3 - Q1
+            lower_limit = Q1 - 1.5 * IQR
+            upper_limit = Q3 + 1.5 * IQR
+            print('lower_limit: ', lower_limit, 'upper_limit: ', upper_limit)
+            upper_rows = data[data[col] > upper_limit]
+            lower_rows = data[data[col] < lower_limit]
+            outlier_rows = pd.concat([upper_rows, lower_rows])
+            data[col] = np.where(data[col] >= upper_limit, upper_limit, data[col])
+            data[col] = np.where(data[col] <= lower_limit, lower_limit, data[col])
+        return data, outlier_rows
+
+    @classmethod
+    def drop_outliers_with_threshold(data, column, max_thresh, min_thresh):
+        if max_thresh:
+            data = data[data[column] <= max_thresh]
+        if min_thresh:
+            data = data[data[column] >= min_thresh]
+        return data
+>>>>>>> Stashed changes
