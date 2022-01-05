@@ -4,10 +4,18 @@ import os
 from datetime import datetime
 import pgeocode
 from sklearn.preprocessing import LabelEncoder
-
+import numpy as np
 
 
 class preprocessing:
+    numerical_column = ['declared_handling_days', 'shipping_fee',
+                        'carrier_min_estimate',
+                        'carrier_max_estimate',
+                        'item_price',
+                        'quantity',
+                        'weight',
+                        'distance_between_pincodes']
+
     @staticmethod
     def import_test():
         """Testing import. It should print\"Preprocessing successfully imported.\""""
@@ -126,6 +134,15 @@ class preprocessing:
         return df
 
     @classmethod
+    def create_mapped_frequencies(cls, df, column_to_get_frequencies):
+        seller_id_value_counts = df[column_to_get_frequencies].value_counts()
+        mapping_data = {}
+        for key in seller_id_value_counts.index:
+            mapping_data[key] = seller_id_value_counts[key]
+        df[column_to_get_frequencies + "_frequencies"] = df[column_to_get_frequencies].map(mapping_data)
+        return df, column_to_get_frequencies + "_frequencies"
+
+    @classmethod
     def basic_preprocessing(Preprocessing, df):
         df = preprocessing.parse_datetime_columns(df)
         print("Finished parse_datetime_columns")
@@ -134,6 +151,7 @@ class preprocessing:
         df = preprocessing.clean_zip_codes(df)
         print("Finished clean_zip_codes")
         df = preprocessing.add_distance_euclidean(df)
+        df = preprocessing.create_mapped_frequencies(df, column_to_get_frequencies = "seller_id")
         return df
 
     @staticmethod
@@ -146,3 +164,46 @@ class preprocessing:
         df[date_column+"_weekday"] = df[date_column].apply(lambda x : x.strftime('%A'))
         df[date_column+"_day_of_year"] = df[date_column].apply(lambda x : int(x.strftime('%j')))
         return df
+
+    @classmethod
+    def drop_bad_values(cls, df):
+        df = preprocessing.replace_neg_with_nan(df)
+        df = preprocessing.drop_nan(df)
+        return df
+
+    @classmethod
+    def replace_neg_with_nan(cls, df):
+        for col in cls.numerical_column:
+            col_data = df[col]
+            negative_mask = col_data < 0
+            col_data[negative_mask] = np.nan
+            df[col] = col_data
+        return df
+
+    @classmethod
+    def drop_nan(cls, df):
+        na_columns = []
+        sum_na = df.isnull().sum()
+        columns = df.columns
+        for i in range(len(sum_na)):
+            if sum_na[i] != 0:
+                if int((sum_na[i] / len(df)) * 100) == 0:
+                    na_columns.append(columns[i])
+        df = df.dropna(subset = na_columns)
+        return df
+
+    @classmethod
+    def squeeze_outlier_with_interquantile_range(cls, data):
+        for col in cls.numerical_column:
+            sorted(data[col])
+            Q1, Q3 = data[col].quantile([0.25, 0.75])
+            IQR = Q3 - Q1
+            lower_limit = Q1 - 1.5 * IQR
+            upper_limit = Q3 + 1.5 * IQR
+            print('lower_limit: ', lower_limit, 'upper_limit: ', upper_limit)
+            upper_rows = data[data[col] > upper_limit]
+            lower_rows = data[data[col] < lower_limit]
+            outlier_rows = pd.concat([upper_rows, lower_rows])
+            data[col] = np.where(data[col] >= upper_limit, upper_limit, data[col])
+            data[col] = np.where(data[col] <= lower_limit, lower_limit, data[col])
+        return data, outlier_rows

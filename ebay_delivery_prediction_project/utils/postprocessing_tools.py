@@ -12,6 +12,8 @@ class postprocessing:
     def generate_submission_file(postprocessing, df, predicted_dates_column):
         if not os.path.isdir("results"):
             os.mkdir("results")
-        df[["record_number", predicted_dates_column]].to_csv("./results/result_"+ datetime.now().strftime("%Y-%m-%d %H:%M:%S") +".tsv.gz",
+        output_file_path = os.path.normpath("./results/result_"+ datetime.now().strftime("%Y-%m-%d %H-%M-%S") +".tsv.gz")
+        print("output_file_path : ", output_file_path)
+        df[["record_number", predicted_dates_column]].to_csv(output_file_path,
                                                                    header = False, index = False, sep = "\t",
                                                                   compression="gzip")

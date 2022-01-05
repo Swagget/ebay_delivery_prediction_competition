@@ -11,3 +11,5 @@ ebay_delivery_prediction_project.egg-info/top_level.txt
 ebay_delivery_prediction_project.egg-info/SOURCES.txt
 ebay_delivery_prediction_project.egg-info/PKG-INFO
 ebay_delivery_prediction_project.egg-info/dependency_links.txt
+*.gz
+*.csv
