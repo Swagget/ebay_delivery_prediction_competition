@@ -8,14 +8,13 @@ import numpy as np
 
 
 class preprocessing:
-    def __init__(self):
-        self.numerical_column = ['declared_handling_days', 'shipping_fee',
-        'carrier_min_estimate',
-        'carrier_max_estimate',
-        'item_price',
-        'quantity',
-        'weight',
-        'distance_between_pincodes']
+    numerical_column = ['declared_handling_days', 'shipping_fee',
+                        'carrier_min_estimate',
+                        'carrier_max_estimate',
+                        'item_price',
+                        'quantity',
+                        'weight',
+                        'distance_between_pincodes']
 
     @staticmethod
     def import_test():
@@ -135,6 +134,15 @@ class preprocessing:
         return df
 
     @classmethod
+    def create_mapped_frequencies(cls, df, column_to_get_frequencies):
+        seller_id_value_counts = df[column_to_get_frequencies].value_counts()
+        mapping_data = {}
+        for key in seller_id_value_counts.index:
+            mapping_data[key] = seller_id_value_counts[key]
+        df[column_to_get_frequencies + "_frequencies"] = df[column_to_get_frequencies].map(mapping_data)
+        return df, column_to_get_frequencies + "_frequencies"
+
+    @classmethod
     def basic_preprocessing(Preprocessing, df):
         df = preprocessing.parse_datetime_columns(df)
         print("Finished parse_datetime_columns")
@@ -143,6 +151,7 @@ class preprocessing:
         df = preprocessing.clean_zip_codes(df)
         print("Finished clean_zip_codes")
         df = preprocessing.add_distance_euclidean(df)
+        df = preprocessing.create_mapped_frequencies(df, column_to_get_frequencies = "seller_id")
         return df
 
     @staticmethod
@@ -157,6 +166,12 @@ class preprocessing:
         return df
 
     @classmethod
+    def drop_bad_values(cls, df):
+        df = preprocessing.replace_neg_with_nan(df)
+        df = preprocessing.drop_nan(df)
+        return df
+
+    @classmethod
     def replace_neg_with_nan(cls, df):
         for col in cls.numerical_column:
             col_data = df[col]
@@ -164,7 +179,8 @@ class preprocessing:
             col_data[negative_mask] = np.nan
             df[col] = col_data
         return df
-    
+
+    @classmethod
     def drop_nan(cls, df):
         na_columns = []
         sum_na = df.isnull().sum()
@@ -176,6 +192,7 @@ class preprocessing:
         df = df.dropna(subset = na_columns)
         return df
 
+    @classmethod
     def squeeze_outlier_with_interquantile_range(cls, data):
         for col in cls.numerical_column:
             sorted(data[col])
