@@ -1,5 +1,7 @@
 # Ebay delivery prediction
 
+This is the code and framework we used to participate in the [eBay 2021 University Machine Learning Competition](https://eval.ai/web/challenges/challenge-page/1205/overview).
+
 # Data
 ## Manually Download
 For data to be properly downloaded the 2 given files 'train.tsv' and 'quiz.tsv' should be in "./data/supplied_data".
